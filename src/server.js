@@ -30,6 +30,7 @@ app.use(cookie_parser());
 app.use(express.static(__dirname));
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/node_modules'));
+app.use(express.static(path.join(__dirname, "src")));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -91,7 +92,6 @@ app.post('/register', (req, res) => {
     User.register(new User({username: username, email: email}), password, (err, user) => {
       if (err) {
         console.log(err);
-        console.log('tutaj je blad!');
       } else {
         passport.authenticate('local')(req, res, () => {
           res.redirect('/login');
@@ -126,26 +126,6 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-// io.on('registerUser', async({username, email, password}) => {
-//     try{
-//         const user = await authRoutes.registerUser(username, email, password);
-//         socket.emit('loggedIn', user);
-//     } catch (error) {
-//         socket.emit('loginError', error.message);
-//     }
-// })
-
-// io.on('loginUser', async ({ email, password }) => {
-//     try {
-//       const user = await authRoutes.loginUser(email, password);
-//       socket.emit('loggedIn', user);
-//     } catch (error) {
-//       socket.emit('loginError', error.message);
-//     }
-// });
-
-  
-
 
 app.get('/client.js', function(req, res) {
     res.setHeader('Content-Type', 'text/javascript');
@@ -165,7 +145,7 @@ io.on('connection', (socket) => {
             socket.emit('init', messages.map((message) => ({ // mapujemy bo nie mozna stringowac obiektu bo wyjdzie username: [object Object]
                 username: message.username,
                 message: message.message,
-                created: message.create,
+                created: new Date(message.created).toLocaleString('pl-PL', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
             })));
         })
         .catch(err => {
@@ -179,7 +159,8 @@ io.on('connection', (socket) => {
 
         const message = new Message({
             username: socket.request.session.username,
-            message: data
+            message: data,
+            created: Date.now().toLocaleString('pl-PL', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
         });
 
         message.save()

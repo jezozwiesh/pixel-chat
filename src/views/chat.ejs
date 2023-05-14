@@ -5,18 +5,25 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>chat-app</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" type="text/css" href="../styles/style.css">
     </head>
     <body>
         <header>
             <h1>Pixel chat</h1>
         </header>
+        <div class="left-bar-small"></div>
+        <div class="left-bar-big">
+            <div class="group-bar">
+                <label>/wszyscy</label>
+            </div>
+        </div>
+        <div class="bottom-bar"></div>
         <div id="messages"></div>
         <form id="chat-form">
             <input type="text" id="message-input" placeholder="Napisz coś">
             <button type="submit">Send</button>
         </form>
-
+        
         <script src="http://localhost:2137/socket.io/socket.io.js"></script>
         <script src="/client.js"></script>
     </body>
