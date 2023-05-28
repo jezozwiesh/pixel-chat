@@ -21,7 +21,7 @@ const mongodb_store = require('connect-mongodb-session')(session);
 const User = require('./models/user.js');
 
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 const cookie_parser = require('cookie-parser');
@@ -76,10 +76,7 @@ app.use(passport.session());
   
 
 // Passport configuration
-passport.use(new local_strategy({
-    usernameField: 'email',
-    passwordField: 'password'
-}, User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
@@ -88,8 +85,13 @@ passport.deserializeUser(User.deserializeUser());
 
 app.post('/register', (req, res) => {
     const {username, email, password} = req.body;
-    
-    User.register(new User({username: username, email: email}), password, (err, user) => {
+
+    if (!username || !email || !password) {
+        return res.status(400).send('Prosze wypelnic wszystkie pola!');
+    }
+
+    const newUser = new User({username, email});
+    User.register(newUser, password, (err, user) => {
       if (err) {
         console.log(err);
       } else {
@@ -106,10 +108,12 @@ app.post('/login', passport.authenticate('local', {failureRedirect: '/login'}), 
 });
 
 app.get('/login', (req, res) => {
+    if (req.session.user != undefined) return res.render('chat');
     res.render('login');
 });  
   
-app.get('/register', (req, res) => {;
+app.get('/register', (req, res) => {
+    if (req.session.user != undefined) return res.render('chat');
     res.render('register');
 });
 
@@ -119,11 +123,12 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/chat', (req, res) => {
-    res.render('chat');
+    if(req.session.user != undefined) return res.render('login');
+    res.render('chat')
 });
 
 app.get('/', (req, res) => {
-    res.render('index');
+    res.render('login');
 });
 
 
@@ -155,12 +160,19 @@ io.on('connection', (socket) => {
     socket.on('message', function(data) {
         console.log('message received from', socket.request.session.username, ':', data);
         console.log('broadcasting to', socket.client.conn.server.clientsCount, 'clients');
-        io.emit('message', {username: socket.request.session.username, message: data}); 
+        
+        const message_data = {
+            username: socket.request.session.username,
+            message: data,
+            created: new Date().toLocaleString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+        }
+
+        io.emit('message', message_data);
 
         const message = new Message({
             username: socket.request.session.username,
             message: data,
-            created: Date.now().toLocaleString('pl-PL', {day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'})
+            created: Date.now()
         });
 
         message.save()
