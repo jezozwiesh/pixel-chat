@@ -83,6 +83,11 @@ h1{
     font-size: smaller
 }
 
+a{
+    text-decoration: none;
+    color: aliceblue;
+}
+
 .wiad{
     background-color:red;
     width:fit-content;

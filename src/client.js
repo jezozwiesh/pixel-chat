@@ -15,13 +15,13 @@ chat_form.addEventListener('submit', (event) =>{
 socket.on('init', function(messages) {
     messages.reverse().forEach((message) => {
         const message_element = document.createElement('div');
-        message_element.textContent = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
+        message_element.innerHTML = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
         messages_div.appendChild(message_element);
     })
 });
 
 socket.on('message', function(message) {
     const message_element = document.createElement('div');
-    message_element.textContent = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
+    message_element.innerHTML = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
     messages_div.appendChild(message_element);
 });
