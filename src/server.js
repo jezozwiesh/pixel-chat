@@ -64,7 +64,7 @@ Store.on('error', (error) => {
 });
 
 const session_middleware = session({
-    secret: 'uwu_sekrecik',
+    secret: 'sekret',
     resave: false,
     saveUninitialized: false,
     store: Store 

@@ -82,3 +82,23 @@ h1{
     height: 40px;
     font-size: smaller
 }
+
+.wiad{
+    background-color:red;
+    width:fit-content;
+    padding:10px;
+    color:white;
+    border-radius:15px;
+}
+span{
+    color:lightgrey;
+    padding:1px;
+    margin:5px 1px;
+}
+p{
+    margin:0px;
+    font-size:large;
+}
+h5{
+    margin: 2px 5px;
+}
