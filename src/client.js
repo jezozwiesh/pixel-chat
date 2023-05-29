@@ -12,16 +12,19 @@ chat_form.addEventListener('submit', (event) =>{
 });
 
 
+
 socket.on('init', function(messages) {
     messages.reverse().forEach((message) => {
         const message_element = document.createElement('div');
         message_element.innerHTML = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
         messages_div.appendChild(message_element);
     })
+    messages_div.scrollTo(0, messages_div.scrollHeight);
 });
 
 socket.on('message', function(message) {
     const message_element = document.createElement('div');
     message_element.innerHTML = `<h5>${message.username}</h5><div class="wiad"><span>${message.created}</span><p>${message.message}</p></div>`;
     messages_div.appendChild(message_element);
+    messages_div.scrollTo(0, messages_div.scrollHeight);
 });
